@@ -1,7 +1,12 @@
+import streamlit as st
 from functions.functions import Dados, Rede
+
+st.title("Análise de Rede de Comércio Internacional")
 
 dados = Dados(path_data=r"data")
 df = dados.processa_dados(2023)
+
+st.write("Dados processados:", df.head())
 
 rede_comercial = Rede(df=df)
 rede_comercial.constroi_rede()

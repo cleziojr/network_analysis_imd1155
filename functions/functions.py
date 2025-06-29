@@ -3,6 +3,7 @@ import pandas as pd
 import collections
 import matplotlib.pyplot as plt
 import networkx as nx
+import streamlit as st
 from pyvis import network as net
 from IPython.core.display import display, HTML
 
@@ -312,7 +313,9 @@ class Rede:
         rede.from_nx(g)
         rede.show_buttons(filter_=True)
         rede.show(nome_arquivo_rede)
-        display(HTML(nome_arquivo_rede))
+        #display(HTML(nome_arquivo_rede))
+        st.components.v1.html(open(nome_arquivo_rede, "r", encoding="utf-8").read(), height=500)
+
 
     def calcula_metricas_centralidade(self) -> None:
 
