@@ -1,4 +1,4 @@
-from .functions.functions import processa_dados, constroi_rede, calcula_estatisticas_rede, cria_subredes
+from ..functions.functions import processa_dados, constroi_rede, calcula_estatisticas_rede, cria_subredes
 
 dados = Dados(path_data=r"data")
 df = dados.processa_dados(2023)
