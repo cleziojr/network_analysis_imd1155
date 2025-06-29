@@ -309,12 +309,12 @@ class Rede:
     def exibe_rede(self, g: nx.DiGraph, cabecalho: str, nome_arquivo_rede: str) -> None:
 
         # Função criada para facilitar a criação paramétrica das visualizações utilizando pyviz por meio do paradigma orientado a objetos
-        rede = net.Network(height='400px', width='50%', heading=cabecalho, directed=True, neighborhood_highlight=True, select_menu=True, filter_menu=True, notebook=True, cdn_resources='remote')
+        rede = net.Network(height='600px', width='100%', heading=cabecalho, directed=True, neighborhood_highlight=True, select_menu=True, filter_menu=True, notebook=False, cdn_resources='remote')
         rede.from_nx(g)
         rede.show_buttons(filter_=True)
         rede.show(nome_arquivo_rede)
         #display(HTML(nome_arquivo_rede))
-        st.components.v1.html(open(nome_arquivo_rede, "r", encoding="utf-8").read(), height=500)
+        st.components.v1.html(open(nome_arquivo_rede, "r", encoding="utf-8").read(), height=650, scrolling=True)
 
 
     def calcula_metricas_centralidade(self) -> None:
@@ -363,7 +363,7 @@ class Rede:
         plt.title("Histograma de distribuição do grau dos nós")
         plt.ylabel("Frequência")
         plt.xlabel("Grau")
-        plt.show()
+        st.pyplot(fig)
 
     def cria_subrede_centralidade_grau(self, n: int) -> None:
 
