@@ -275,10 +275,10 @@ class Dados:
         
         return df
     
-    def processa_dados(self) -> pd.DataFrame:
+    def processa_dados(self, ano: int) -> pd.DataFrame:
 
         df = self.carrega_dados()
-        df = self.filtra_dados(df=df)
+        df = self.filtra_dados(df=df, ano=ano)
         df = self.converte_abreviacoes(df=df)
 
         return df
@@ -322,7 +322,7 @@ class Rede:
         self.centralidade_grau = nx.degree_centrality(self.dg)
         self.centralidade_proximidade = nx.closeness_centrality(self.dg)
 
-    def identifica_atributos_rede(self, k: int, n: int) -> None:
+    def calcula_propriedades_rede(self, k: int, n: int) -> None:
 
         # Cálculo e identificação de propriedades/atributos da rede
 
@@ -406,16 +406,32 @@ class Rede:
 
         # Subrede dos nós com maiores coeficientes de agrupamento
         maiores_coeficientes_agrupamento = sorted(self.clustering, key=self.clustering.get)[:n] # Substitua n por outro valor, caso deseje restringir ou ampliar o ranking
-        subgrafo_cl_alto = self.subgraph(maiores_coeficientes_agrupamento)
+        subgrafo_cl_alto = self.dg.subgraph(maiores_coeficientes_agrupamento)
         self.exibe_rede(g=subgrafo_cl_alto, cabecalho='Nós com maiores coeficientes de agrupamento', nome_arquivo_rede='hcc.html')
 
     def cria_subrede_fracamente_agrupada(self, n: int) -> None:
 
         # Subrede dos nós com menores coeficientes de agrupamento
         menores_coeficientes_agrupamento = sorted(self.clustering, key=self.clustering.get, reverse=True)[:n] # Substitua 'n' por outro valor, caso deseje restringir ou ampliar o ranking
-        subgrafo_cl_baixo = self.subgraph(menores_coeficientes_agrupamento)
+        subgrafo_cl_baixo = self.dg.subgraph(menores_coeficientes_agrupamento)
         self.exibe_rede(g=subgrafo_cl_baixo, cabecalho='Nós com menores coeficientes de agrupamento', nome_arquivo_rede='lcc.html')
 
+    def calcula_estatisticas_rede(self, k: int, n: int) -> None:
+
+        self.calcula_metricas_centralidade()
+        self.calcula_propriedades_rede(k=k, n=n)
+        self.exibe_distribuicao_grau()
+
+    def cria_subredes(self, n: int) -> None:
+        
+        self.cria_subrede_centralidade_grau(n)
+        self.cria_subrede_centralidade_autovetor(n)
+        self.cria_subrede_centralidade_intermediacao(n)
+        self.cria_subrede_centralidade_proximidade(n)
+        self.cria_subrede_fortemente_conectada()
+        self.cria_subrede_fracamente_conectada()
+        self.cria_subrede_fortemente_agrupada(n)
+        self.cria_subrede_fracamente_agrupada(n)
     
 
 
