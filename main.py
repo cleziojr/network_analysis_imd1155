@@ -1,4 +1,4 @@
-from functions.functions import *
+from functions.functions import Dados, Rede
 
 dados = Dados(path_data=r"data")
 df = dados.processa_dados(2023)
