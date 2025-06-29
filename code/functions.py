@@ -1,6 +1,10 @@
 import os
 import pandas as pd
+import collections
+import matplotlib.pyplot as plt
 import networkx as nx
+from pyvis import network as net
+from IPython.core.display import display, HTML
 
 class Dados:
 
@@ -202,23 +206,70 @@ class Dados:
             'VNM': 'Vietnã',
             'YEM': 'Iêmen',
             'ZMB': 'Zâmbia',
-            'ZWE': 'Zimbábue'
+            'ZWE': 'Zimbábue',
+            'ATA': 'Antártida',
+            'ASM': 'Samoa Americana',
+            'BMU': 'Bermudas',
+            'BVT': 'Ilha Bouvet',
+            'IOT': 'Território Britânico do Oceano Índico',
+            'VGB': 'Ilhas Virgens Britânicas',
+            'CYM': 'Ilhas Cayman',
+            'COD': 'República Democrática do Congo',
+            'COK': 'Ilhas Cook',
+            'CXR': 'Ilha Christmas',
+            'CCK': 'Ilhas Cocos (Keeling)',
+            'FRO': 'Ilhas Faroé',
+            'FLK': 'Ilhas Malvinas (Falkland)',
+            'SGS': 'Ilhas Geórgia do Sul e Sandwich do Sul',
+            'PYF': 'Polinésia Francesa',
+            'ATF': 'Terras Austrais e Antárticas Francesas',
+            'PSE': 'Palestina',
+            'GIB': 'Gibraltar',
+            'GRL': 'Groenlândia',
+            'GUM': 'Guam',
+            'HMD': 'Ilha Heard e Ilhas McDonald',
+            'HKG': 'Hong Kong',
+            'MAC': 'Macau',
+            'MSR': 'Montserrat',
+            'CUW': 'Curaçao',
+            'ABW': 'Aruba',
+            'SXM': 'São Martinho (parte holandesa)',
+            'BES': 'Bonaire, Santo Eustáquio e Saba',
+            'NCL': 'Nova Caledônia',
+            'NIU': 'Niue',
+            'NFK': 'Ilha Norfolk',
+            'MNP': 'Ilhas Marianas do Norte',
+            'UMI': 'Ilhas Menores Distantes dos EUA',
+            'PCN': 'Ilhas Pitcairn',
+            'BLM': 'Saint Barthélemy',
+            'SHN': 'Santa Helena',
+            'AIA': 'Anguilla',
+            'SPM': 'Saint Pierre e Miquelon',
+            'ESH': 'Saara Ocidental',
+            'TKL': 'Tokelau',
+            'TCA': 'Ilhas Turcas e Caicos',
+            'WLF': 'Wallis e Futuna',
+            'ANS': 'Antilhas Holandesas'
         }
 
     def carrega_dados(self) -> pd.DataFrame:
 
+        # Carrega o conjunto de dados e converte para um DataFrame
         df = pd.read_csv(os.path.join(self.path_data, r"hs92_country_country_year.csv"))
 
         return df
     
-    def filtra_dados(self, df) -> pd.DataFrame:
+    def filtra_dados(self, df: pd.DataFrame, ano: int) -> pd.DataFrame:
 
-        df = df[df['year'] == 2023]
+        # Filtra o conjunto de dados com base no valor do ano recebido como parâmetro
+        df = df[df['year'] == ano]
 
         return df
 
-    def converte_abreviacoes(self, df) -> pd.DataFrame:
+    def converte_abreviacoes(self, df: pd.DataFrame) -> pd.DataFrame:
         
+        # Converte abreviações (chaves do dicionário) para os nomes completos dos países (valores do dicionário) nas colunas
+        # do DataFrame que possuíam as abreviações
         df['country_iso3_code'] = df['country_iso3_code'].str.upper().map(self.nomes_paises).fillna(df['country_iso3_code'])
         df['partner_iso3_code'] = df['partner_iso3_code'].str.upper().map(self.nomes_paises).fillna(df['partner_iso3_code'])
         
@@ -236,21 +287,135 @@ class Rede:
 
     def __init__(self, df = pd.DataFrame):
 
+        # Inicializa a instância da classe
         self.dados = df
         self.dg = nx.DiGraph()
 
     def constroi_rede(self) -> nx.DiGraph:
 
+        # Altere o valor do parâmetro 'n' da função 'sample()' para acrescentar ou reduzir a quantidade de nós da sua rede
+        # Considerando o conjunto de dados atual, você pode ter uma rede constituída de no máximo 238 nós.
+        for country_id, country in self.dados[['country_id', 'country_iso3_code']].drop_duplicates().sample(n=50).values:
+            self.dg.add_node(node_for_adding=country_id, label=country)
+
+        # Adição de conexões entre os nós com base no conjunto de dados (dois nós - países - estão conectados se possuem relações econômicas)
         for row in self.dados.itertuples():
-            self.dg.add_edge(row.country_iso3_code, row.partner_iso3_code, abs(row.export_value-row.import_value))
+            if ((row.country_id in self.dg.nodes) and (row.partner_country_id in list(self.dg.nodes))):
+                self.dg.add_edge(row.country_id, row.partner_country_id, weight=abs(row.export_value - row.import_value))
 
         return self.dg
     
-    def analisa_rede(self):
+    def exibe_rede(self, g: nx.DiGraph, cabecalho: str, nome_arquivo_rede: str) -> None:
 
-        print(self.dg.degree)
-        
-        print(self.dg.nodes)
+        # Função criada para facilitar a criação paramétrica das visualizações utilizando pyviz por meio do paradigma orientado a objetos
+        rede = net.Network(height='400px', width='50%', heading=cabecalho, directed=True, neighborhood_highlight=True, select_menu=True, filter_menu=True, notebook=True, cdn_resources='remote')
+        rede.from_nx(g)
+        rede.show_buttons(filter_=True)
+        rede.show(nome_arquivo_rede)
+        display(HTML(nome_arquivo_rede))
+
+    def calcula_metricas_centralidade(self) -> None:
+
+        # Cálculo de métricas de centralidade
+        self.centralidade_intermediacao= nx.betweenness_centrality(self.dg)
+        self.centralidade_autovetor = nx.eigenvector_centrality(self.dg)
+        self.centralidade_grau = nx.degree_centrality(self.dg)
+        self.centralidade_proximidade = nx.closeness_centrality(self.dg)
+
+    def identifica_atributos_rede(self, k: int, n: int) -> None:
+
+        # Cálculo e identificação de propriedades/atributos da rede
+
+        # Densidade da rede
+        # Consiste na divisão da quantidade de arestas existentes pela quantidade de arestas possíveis, fornecendo uma noção
+        # da conectividade do grafo de forma holística
+        self.densidade = nx.density(self.dg)
+
+        # Assortatividade
+        # Conceito associado tanto aos tipos de padrões de em relação ao grau quanto ao modo pela qual se originam as conexões
+        self.assortatividade = nx.degree_assortativity_coefficient(self.dg)
+
+        # Coeficiente de agrupamento global
+        # Calcula a probabilidade de quaisquer pares de nós vizinhos a um determinado nó estarem conectados entre si (formando um clique/triângulo)
+        self.coeficiente_agrupamento_global = nx.average_clustering(self.dg)
+
+        # As duas métricas a seguir exibem a sequência de nós com maior e menor centralidade de grau, respectivamente
+        self.componentes_fortemente_conectados = sorted(self.centralidade_grau, key=self.centralidade_grau.get, reverse=True)[:k] # Substitua 'k' por outro valor, caso deseje restringir ou ampliar o ranking
+        self.componentes_fracamente_conectados = sorted(self.centralidade_grau, key=self.centralidade_grau.get)[:n] # Substitua 'n' por outro valor, caso deseje restringir ou ampliar o ranking
+
+        # Coeficiente de agrupamento local
+        # Como estou passando a rede completa como parâmetro, etorna um dicionário contendo o coeficiente de agrupamento local de cada nó
+        self.clustering = nx.clustering(self.dg)
+    
+    def exibe_distribuicao_grau(self) -> None:
+
+        # Uso do módulo 'collections' para contar a frequência dos graus dos nós
+        sequencia_grau = sorted([d for n, d in self.dg.degree()], reverse=True)
+        degreeCount = collections.Counter(sequencia_grau)
+        deg, cnt = zip(*degreeCount.items())
+
+        # Criação do histograma para visualizar a distribuição do grau dos nós pertencentes à rede em questão
+        fig, ax = plt.subplots()
+        plt.bar(deg, cnt, width=0.80, color='b')
+        plt.title("Histograma de distribuição do grau dos nós")
+        plt.ylabel("Frequência")
+        plt.xlabel("Grau")
+        plt.show()
+
+    def cria_subrede_centralidade_grau(self, n: int) -> None:
+
+        # Subrede dos nós com maior centralidade do grau
+        maiores_centralidades_grau = sorted(self.centralidade_grau, key=self.centralidade_grau.get, reverse=True)[:n] # Substitua 'n' por outro valor, caso deseje restringir ou ampliar o ranking
+        subgrafo_dc = self.dg.subgraph(maiores_centralidades_grau)
+        self.exibe_rede(g=subgrafo_dc, cabecalho='Nós com maiores centralidades de grau', nome_arquivo_rede='degree_centrality.html')
+
+    def cria_subrede_centralidade_autovetor(self, n: int) -> None:
+
+        # Subrede dos nós com maior centralidade do autovetor
+        maiores_centralidades_autovetor = sorted(self.centralidade_autovetor, key=self.centralidade_autovetor.get, reverse=True)[:n] # Substitua 'n' por outro valor, caso deseje restringir ou ampliar o ranking
+        subgrafo_ec = self.dg.subgraph(maiores_centralidades_autovetor)
+        self.exibe_rede(g=subgrafo_ec, cabecalho='Nós com maiores centralidades de autovetor', nome_arquivo_rede='eigenvector_centrality.html')
+
+    def cria_subrede_centralidade_intermediacao(self, n: int) -> None:
+
+        # Subrede dos nós com maior centralidade de intermediação
+        maiores_centralidades_intermediacao = sorted(self.centralidade_intermediacao, key=self.centralidade_intermediacao.get, reverse=True)[:n] # Substitua 'n' por outro valor, caso deseje restringir ou ampliar o ranking
+        subgrafo_bc = self.dg.subgraph(maiores_centralidades_intermediacao)
+        self.exibe_rede(g=subgrafo_bc, cabecalho='Nós com maiores centralidades de intermediação', nome_arquivo_rede='betweenness_centrality.html')
+
+    def cria_subrede_centralidade_proximidade(self, n: int) -> None:
+
+        # Subrede dos nós com maior centralidade de proximidade
+        maiores_centralidades_proximidade = sorted(self.centralidade_proximidade, key=self.centralidade_proximidade.get, reverse=True)[:n] # Substitua 'n' por outro valor, caso deseje restringir ou ampliar o ranking
+        subgrafo_cc = self.dg.subgraph(maiores_centralidades_proximidade)
+        self.exibe_rede(g=subgrafo_cc, cabecalho='Nós com maiores centralidades de proximidade', nome_arquivo_rede='closeness_centrality.html')
+
+    def cria_subrede_fortemente_conectada(self) -> None:
+
+        # Subrede dos nós mais fortemente conectados
+        subgrafo_scc = self.dg.subgraph(self.componentes_fortemente_conectados)
+        self.exibe_rede(g=subgrafo_scc, cabecalho='Nós mais fortemente conectados', nome_arquivo_rede='scc.html')
+
+    def cria_subrede_fracamente_conectada(self) -> None:
+
+        # Subrede dos nós mais fracamente conectados
+        subgrafo_wcc = self.dg.subgraph(self.componentes_fracamente_conectados)
+        self.exibe_rede(g=subgrafo_wcc, cabecalho='Nós mais fracamente conectados', nome_arquivo_rede='wcc.html')  
+
+    def cria_subrede_fortemente_agrupada(self, n: int) -> None:
+
+        # Subrede dos nós com maiores coeficientes de agrupamento
+        maiores_coeficientes_agrupamento = sorted(self.clustering, key=self.clustering.get)[:n] # Substitua n por outro valor, caso deseje restringir ou ampliar o ranking
+        subgrafo_cl_alto = self.subgraph(maiores_coeficientes_agrupamento)
+        self.exibe_rede(g=subgrafo_cl_alto, cabecalho='Nós com maiores coeficientes de agrupamento', nome_arquivo_rede='hcc.html')
+
+    def cria_subrede_fracamente_agrupada(self, n: int) -> None:
+
+        # Subrede dos nós com menores coeficientes de agrupamento
+        menores_coeficientes_agrupamento = sorted(self.clustering, key=self.clustering.get, reverse=True)[:n] # Substitua 'n' por outro valor, caso deseje restringir ou ampliar o ranking
+        subgrafo_cl_baixo = self.subgraph(menores_coeficientes_agrupamento)
+        self.exibe_rede(g=subgrafo_cl_baixo, cabecalho='Nós com menores coeficientes de agrupamento', nome_arquivo_rede='lcc.html')
+
     
 
 
