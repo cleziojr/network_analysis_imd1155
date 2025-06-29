@@ -301,7 +301,8 @@ class Rede:
         # Adição de conexões entre os nós com base no conjunto de dados (dois nós - países - estão conectados se possuem relações econômicas)
         for row in self.dados.itertuples():
             if ((row.country_id in self.dg.nodes) and (row.partner_country_id in list(self.dg.nodes))):
-                self.dg.add_edge(row.country_id, row.partner_country_id, weight=abs(row.export_value - row.import_value))
+                #self.dg.add_edge(row.country_id, row.partner_country_id, weight=abs(row.export_value - row.import_value))
+                self.dg.add_edge(row.country_id, row.partner_country_id)
 
         return self.dg
     

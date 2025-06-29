@@ -1,7 +1,6 @@
 import streamlit as st
 from functions.functions import Dados, Rede
 
-st.set_page_config(layout="wide")
 st.title("Análise de Rede de Comércio Internacional")
 
 dados = Dados(path_data=r"data")
