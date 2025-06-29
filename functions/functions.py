@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import streamlit as st
 from pyvis import network as net
-from IPython.core.display import display, HTML
 
 class Dados:
 
@@ -309,12 +308,11 @@ class Rede:
     def exibe_rede(self, g: nx.DiGraph, cabecalho: str, nome_arquivo_rede: str) -> None:
 
         # Função criada para facilitar a criação paramétrica das visualizações utilizando pyviz por meio do paradigma orientado a objetos
-        rede = net.Network(height='600px', width='100%', heading=cabecalho, directed=True, neighborhood_highlight=True, select_menu=True, filter_menu=True, notebook=True, cdn_resources='in_line')
+        rede = net.Network(height='800px', width='100%', heading=cabecalho, directed=True, neighborhood_highlight=True, select_menu=True, filter_menu=True, notebook=True, cdn_resources='remote')
         rede.from_nx(g)
         rede.show_buttons(filter_=True)
         rede.show(nome_arquivo_rede)
-        #display(HTML(nome_arquivo_rede))
-        st.components.v1.html(open(nome_arquivo_rede, "r", encoding="utf-8").read(), height=650, scrolling=True)
+        st.components.v1.html(open(nome_arquivo_rede, "r", encoding="utf-8").read(), height=800, scrolling=True)
 
 
     def calcula_metricas_centralidade(self) -> None:
