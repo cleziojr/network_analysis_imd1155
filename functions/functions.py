@@ -400,7 +400,7 @@ class Rede:
         # Uso do módulo 'collections' para contar a frequência dos graus dos nós
         graus = sorted([d for n, d in self.dg.degree()])
         frequencia_graus = collections.Counter(graus)
-        graus, frequencia_graus = zip(*degreeCount.items())
+        graus, frequencia_graus = zip(*frequencia_graus.items())
 
         # Criação do histograma para visualizar a distribuição do grau dos nós pertencentes à rede em questão
         fig, ax = plt.subplots(figsize=(10, 5))
