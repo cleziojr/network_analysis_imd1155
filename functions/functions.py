@@ -313,7 +313,7 @@ class Rede:
         rede.from_nx(g)
         rede.show_buttons(filter_=True)
         rede.show(nome_arquivo_rede)
-        st.components.v1.html(open(nome_arquivo_rede, "r", encoding="utf-8").read(), height=1200, scrolling=True)
+        st.components.v1.html(open(nome_arquivo_rede, "r", encoding="utf-8").read(), height=700, scrolling=True)
 
 
     def calcula_metricas_centralidade(self) -> None:
@@ -358,7 +358,7 @@ class Rede:
 
         # Criação do histograma para visualizar a distribuição do grau dos nós pertencentes à rede em questão
         fig, ax = plt.subplots()
-        plt.bar(deg, cnt, width=0.80, color='b')
+        plt.bar(deg, cnt, width=0.70, color='b')
         plt.title("Histograma de distribuição do grau dos nós")
         plt.ylabel("Frequência")
         plt.xlabel("Grau")
