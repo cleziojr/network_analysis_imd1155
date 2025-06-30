@@ -340,21 +340,18 @@ class Rede:
 
         texto = f"""
         Densidade da Rede: {self.densidade:.4f}  
-        Consiste na divisão da quantidade de arestas existentes pela quantidade de arestas possíveis, fornecendo uma noção da conectividade do grafo de forma holística.
-
+        Consiste na divisão da quantidade de arestas existentes pela quantidade de arestas possíveis, fornecendo uma noção da conectividade do grafo de forma holística.\n
         Assortatividade: {self.assortatividade:.4f}  
-        Conceito associado tanto aos tipos de padrões de em relação ao grau quanto ao modo pela qual se originam as conexões.
-
+        Conceito associado tanto aos tipos de padrões de em relação ao grau quanto ao modo pela qual se originam as conexões.\n
         Coeficiente de Agrupamento Global: {self.coeficiente_agrupamento_global:.4f}  
-        Calcula a probabilidade de quaisquer pares de nós vizinhos a um determinado nó estarem conectados entre si (formando um clique/triângulo).
-
+        Calcula a probabilidade de quaisquer pares de nós vizinhos a um determinado nó estarem conectados entre si (formando um clique/triângulo).\n
         Top {k} nós com maior centralidade de grau:\n  
         """
         for i, node in enumerate(self.componentes_fortemente_conectados, 1):
             label = self.dg.nodes[node].get('label', node)
             texto += f"{i}. {label}\n"
 
-        texto += f"\n**Top {n} nós com menor centralidade de grau:**\n"
+        texto += f"\nTop {n} nós com menor centralidade de grau:\n"
         for i, node in enumerate(self.componentes_fracamente_conectados, 1):
             label = self.dg.nodes[node].get('label', node)
             texto += f"{i}. {label}\n"
