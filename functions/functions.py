@@ -339,16 +339,16 @@ class Rede:
         self.clustering = nx.clustering(self.dg)
 
         texto = f"""
-        **Densidade da Rede:** {self.densidade:.4f}  
+        Densidade da Rede: {self.densidade:.4f}  
         Consiste na divisão da quantidade de arestas existentes pela quantidade de arestas possíveis, fornecendo uma noção da conectividade do grafo de forma holística.
 
-        **Assortatividade:** {self.assortatividade:.4f}  
+        Assortatividade: {self.assortatividade:.4f}  
         Conceito associado tanto aos tipos de padrões de em relação ao grau quanto ao modo pela qual se originam as conexões.
 
-        **Coeficiente de Agrupamento Global:** {self.coeficiente_agrupamento_global:.4f}  
+        Coeficiente de Agrupamento Global: {self.coeficiente_agrupamento_global:.4f}  
         Calcula a probabilidade de quaisquer pares de nós vizinhos a um determinado nó estarem conectados entre si (formando um clique/triângulo).
 
-        **Top {k} nós com maior centralidade de grau:**  
+        Top {k} nós com maior centralidade de grau:\n  
         """
         for i, node in enumerate(self.componentes_fortemente_conectados, 1):
             label = self.dg.nodes[node].get('label', node)
