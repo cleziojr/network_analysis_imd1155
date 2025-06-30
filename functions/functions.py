@@ -371,15 +371,41 @@ class Rede:
     
     def exibe_distribuicao_grau(self) -> None:
 
+        graus_entrada = [d for n, d in self.dg.in_degree()]
+        graus_saida = [d for n, d in self.dg.out_degree()]
+
+        # Uso do módulo 'collections' para contar a frequência dos graus de entrada e saída dos nós
+        frequencia_graus_entrada = collections.Counter(graus_entrada)
+        frequencia_graus_saida = collections.Counter(graus_saida)
+
+        graus_entrada, frequencia_graus_entrada = zip(*sorted(frequencia_graus_entrada.items()))
+        graus_saida, frequencia_graus_saida = zip(*sorted(frequencia_graus_saida.items()))
+
+        # Plotagem do histograma de distribuição do grau de entrada
+        fig_in, ax_in = plt.subplots(figsize=(10, 5))
+        ax_in.bar(graus_entrada, frequencia_graus_entrada, width=0.1, color='skyblue')
+        ax_in.set_title('Histograma de distribuição do grau de entrada dos nós')
+        ax_in.set_xlabel('Grau de entrada')
+        ax_in.set_ylabel('Frequência')
+        st.pyplot(fig_in)
+
+        # Plotagem do histograma de distribuição do grau de saída
+        fig_out, ax_out = plt.subplots(figsize=(10, 5))
+        ax_out.bar(graus_saida, frequencia_graus_saida, width=0.1, color='salmon')
+        ax_out.set_title('Histograma de distribuição do grau de saída dos nós')
+        ax_out.set_xlabel('Grau de saída')
+        ax_out.set_ylabel('Frequência')
+        st.pyplot(fig_out)
+
         # Uso do módulo 'collections' para contar a frequência dos graus dos nós
-        sequencia_grau = sorted([d for n, d in self.dg.degree()], reverse=True)
-        degreeCount = collections.Counter(sequencia_grau)
-        deg, cnt = zip(*degreeCount.items())
+        graus = sorted([d for n, d in self.dg.degree()])
+        frequencia_graus = collections.Counter(graus)
+        graus, frequencia_graus = zip(*degreeCount.items())
 
         # Criação do histograma para visualizar a distribuição do grau dos nós pertencentes à rede em questão
         fig, ax = plt.subplots(figsize=(10, 5))
-        plt.bar(deg, cnt, width=0.1, color='b')
-        plt.title("Histograma de distribuição do grau dos nós")
+        plt.bar(graus, frequencia_graus, width=0.1, color='b')
+        plt.title("Histograma de distribuição do grau dos nós (in + out degree)")
         plt.ylabel("Frequência")
         plt.xlabel("Grau")
         st.pyplot(fig)
