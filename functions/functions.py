@@ -363,7 +363,7 @@ class Rede:
             label = self.dg.nodes[node].get('label', node)
             texto += f"{i}. {label}\n"
         
-        st.markdown(texto)
+        st.write(texto)
     
     def exibe_distribuicao_grau(self) -> None:
 
