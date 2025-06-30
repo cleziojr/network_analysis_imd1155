@@ -328,26 +328,38 @@ class Rede:
 
         # Cálculo e identificação de propriedades/atributos da rede
 
-        # Densidade da rede
-        # Consiste na divisão da quantidade de arestas existentes pela quantidade de arestas possíveis, fornecendo uma noção
-        # da conectividade do grafo de forma holística
         self.densidade = nx.density(self.dg)
-
-        # Assortatividade
-        # Conceito associado tanto aos tipos de padrões de em relação ao grau quanto ao modo pela qual se originam as conexões
         self.assortatividade = nx.degree_assortativity_coefficient(self.dg)
-
-        # Coeficiente de agrupamento global
-        # Calcula a probabilidade de quaisquer pares de nós vizinhos a um determinado nó estarem conectados entre si (formando um clique/triângulo)
         self.coeficiente_agrupamento_global = nx.average_clustering(self.dg)
-
-        # As duas métricas a seguir exibem a sequência de nós com maior e menor centralidade de grau, respectivamente
         self.componentes_fortemente_conectados = sorted(self.centralidade_grau, key=self.centralidade_grau.get, reverse=True)[:k] # Substitua 'k' por outro valor, caso deseje restringir ou ampliar o ranking
         self.componentes_fracamente_conectados = sorted(self.centralidade_grau, key=self.centralidade_grau.get)[:n] # Substitua 'n' por outro valor, caso deseje restringir ou ampliar o ranking
 
         # Coeficiente de agrupamento local
         # Como estou passando a rede completa como parâmetro, etorna um dicionário contendo o coeficiente de agrupamento local de cada nó
         self.clustering = nx.clustering(self.dg)
+
+        texto = f"""
+        **Densidade da Rede:** {self.densidade:.4f}  
+        Consiste na divisão da quantidade de arestas existentes pela quantidade de arestas possíveis, fornecendo uma noção da conectividade do grafo de forma holística.
+
+        **Assortatividade:** {self.assortatividade:.4f}  
+        Conceito associado tanto aos tipos de padrões de em relação ao grau quanto ao modo pela qual se originam as conexões.
+
+        **Coeficiente de Agrupamento Global:** {self.coeficiente_agrupamento_global:.4f}  
+        Calcula a probabilidade de quaisquer pares de nós vizinhos a um determinado nó estarem conectados entre si (formando um clique/triângulo).
+
+        **Top {k} nós com maior centralidade de grau:**  
+        """
+        for i, node in enumerate(self.componentes_fortemente_conectados, 1):
+            label = self.dg.nodes[node].get('label', node)
+            texto += f"{i}. {label}\n"
+
+        texto += f"\n**Top {n} nós com menor centralidade de grau:**\n"
+        for i, node in enumerate(self.componentes_fracamente_conectados, 1):
+            label = self.dg.nodes[node].get('label', node)
+            texto += f"{i}. {label}\n"
+        
+        st.markdown(texto)
     
     def exibe_distribuicao_grau(self) -> None:
 
