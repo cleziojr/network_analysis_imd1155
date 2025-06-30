@@ -339,7 +339,7 @@ class Rede:
         self.clustering = nx.clustering(self.dg)
 
         texto = f"""
-        # Apresentação de métricas calculadas e breve definição de seus respectivos conceitos
+        ## Apresentação de métricas calculadas e breve definição de seus respectivos conceitos
         
         Densidade da Rede: {self.densidade:.4f}  
         Consiste na divisão da quantidade de arestas existentes pela quantidade de arestas possíveis, fornecendo uma noção da conectividade do grafo de forma holística.
@@ -349,6 +349,8 @@ class Rede:
 
         Coeficiente de Agrupamento Global: {self.coeficiente_agrupamento_global:.4f}  
         Calcula a probabilidade de quaisquer pares de nós vizinhos a um determinado nó estarem conectados entre si (formando um clique/triângulo).
+
+        Centralidade de grau: conceito associado à quantidade de conexões que um nó possui. Um nó com alta centralide de grau possui muitas conexões, por exemplo.
 
         """
         texto += f"\nTop {k} nós com maior centralidade de grau:\n"
