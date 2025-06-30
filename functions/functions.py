@@ -358,7 +358,7 @@ class Rede:
 
         # Criação do histograma para visualizar a distribuição do grau dos nós pertencentes à rede em questão
         fig, ax = plt.subplots()
-        plt.bar(deg, cnt, width=0.70, color='b')
+        plt.bar(deg, cnt, height=0.70, width=0.70, color='b')
         plt.title("Histograma de distribuição do grau dos nós")
         plt.ylabel("Frequência")
         plt.xlabel("Grau")
