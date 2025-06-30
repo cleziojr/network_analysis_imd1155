@@ -16,6 +16,9 @@ Por fim, cada sub-rede gera um arquivo com extensão '.html' de maneira que voc�
 
 ## Requisitos 
 
-1. Faça um 'fork' do repositório
-2. Cadastre-se no streamlit Cloud
+1. Cadastre-se no streamlit Cloud
+2. Crie um novo projeto e preencha as informações
 3. Passe a URL de referência do arquivo 'main.py' que consta no repositório (exemplo: https://github.com/cleziojr/network_analysis_imd1155/blob/main/main.py)
+4. Confirme o deploy
+5. Aguarde a instalação das dependências
+
