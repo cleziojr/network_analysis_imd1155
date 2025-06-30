@@ -351,14 +351,18 @@ class Rede:
         Calcula a probabilidade de quaisquer pares de nós vizinhos a um determinado nó estarem conectados entre si (formando um clique/triângulo).
 
         Centralidade de grau: conceito associado à quantidade de conexões que um nó possui. Um nó com alta centralide de grau possui muitas conexões, por exemplo.
+        
+        Componentes fortemente conectados: nós que possuem conexões do próprio nó para outro nó e na direção inversa. Por exemplo, dado dois nós A, B, A -> B e B -> A.
+
+        Componentes fracamente conectados: nós que são conectados apenas se não considerarmos a direção da conexão
 
         """
-        texto += f"\nTop {k} nós com maior centralidade de grau:\n"
+        texto += f"\nTop {k} nós mais fortemente conectados:\n"
         for i, node in enumerate(self.componentes_fortemente_conectados, 1):
             label = self.dg.nodes[node].get('label', node)
             texto += f"{i}. {label}\n"
 
-        texto += f"\nTop {n} nós com menor centralidade de grau:\n"
+        texto += f"\nTop {n} nós mais fracamente conectados:\n"
         for i, node in enumerate(self.componentes_fracamente_conectados, 1):
             label = self.dg.nodes[node].get('label', node)
             texto += f"{i}. {label}\n"
