@@ -309,13 +309,27 @@ class Rede:
     def exibe_rede(self, g: nx.DiGraph, cabecalho: str, nome_arquivo_rede: str) -> None:
 
         # Função criada para facilitar a criação paramétrica das visualizações utilizando pyviz por meio do paradigma orientado a objetos
-        rede = net.Network(bgcolor='#ffffff', font_color='black', height='500px', width='600px', heading=cabecalho, directed=True, neighborhood_highlight=True, select_menu=True, filter_menu=True, notebook=True, cdn_resources='remote')
+        rede = net.Network(
+            bgcolor='#ffffff',
+            font_color='black',
+            height='780px',
+            width='1280px',
+            heading='',
+            directed=True,
+            neighborhood_highlight=True,
+            select_menu=True,
+            filter_menu=True,
+            notebook=True,
+            cdn_resources='remote'
+        )
         rede.from_nx(g)
         rede.show_buttons(filter_=True)
         rede.show(nome_arquivo_rede)
-        st.components.v1.html(open(nome_arquivo_rede, "r", encoding="utf-8").read(), height=700, scrolling=True)
+        with open(nome_arquivo_rede, "r", encoding="utf-8") as f:
+            html_content = f.read()
 
-
+        st.markdown(f"### {cabecalho}")
+        st.components.v1.html(html_content, height=700, scrolling=True)
     def calcula_metricas_centralidade(self) -> None:
 
         # Cálculo de métricas de centralidade
@@ -367,7 +381,8 @@ class Rede:
             label = self.dg.nodes[node].get('label', node)
             texto += f"{i}. {label}\n"
         
-        st.write(texto)
+        with st.expander("📑 Métricas Calculadas", expanded=True):
+            st.markdown(texto)
     
     def exibe_distribuicao_grau(self) -> None:
 
@@ -468,7 +483,6 @@ class Rede:
 
         self.calcula_metricas_centralidade()
         self.calcula_propriedades_rede(k=k, n=n)
-        self.exibe_distribuicao_grau()
 
     def cria_subredes(self, n: int) -> None:
         
